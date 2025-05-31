@@ -5,14 +5,25 @@ import zoomRoutes from './zoomHandler';
 import dotenv from 'dotenv';
 
 
-dotenv.config(); 
+dotenv.config();
 
 const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
 const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/your-db';
-mongoose.connect(mongoUri).then(() => console.log('MongoDB connected'));
+
+// --- IMPORTANT CHANGE HERE: Add a .catch() to handle connection errors ---
+mongoose.connect(mongoUri)
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch(err => {
+    console.error('CRITICAL: MongoDB connection error on startup:', err);
+    // Do NOT re-throw here for serverless functions, as it would cause the function to crash
+    // and prevent it from sending any response.
+    // However, if the connection is truly critical for *all* operations,
+    // you might want to consider a different pattern (like connection reuse).
+    // For now, logging the error and letting the app *try* to run is better than crashing.
+  });
 
 app.use('/zoom', zoomRoutes);
 
