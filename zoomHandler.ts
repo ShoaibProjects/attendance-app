@@ -73,7 +73,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
     const hash = crypto
       .createHmac('sha256', ZOOM_WEBHOOK_SECRET_TOKEN)
       .update(plainToken)
-      .digest('base64');
+      .digest('hex');
 
     console.log('Zoom URL validation request received.');
     console.log('Plain Token:', plainToken);
