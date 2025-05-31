@@ -16,7 +16,11 @@ mongoose.connect(mongoUri).then(() => console.log('MongoDB connected'));
 
 app.use('/zoom', zoomRoutes);
 
+// For local development
+if (process.env.NODE_ENV !== 'production') {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+}
+exports.default = app;
