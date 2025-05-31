@@ -86,6 +86,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
     // This fulfills Zoom's requirement for the challenge-response check.
       res.status(200).json({
       plainToken: plainToken,
+            _token: hash,
     });
         return ;
   }
