@@ -2,19 +2,19 @@
 import { Router, Request, Response } from 'express';
 import axios from 'axios';
 import Attendance from './models/Attendance';
-import qs from 'qs';
+import qs from 'qs'; 
 import dotenv from 'dotenv';
-import crypto from 'crypto';
 
-dotenv.config();
+
+dotenv.config(); 
 
 const router = Router();
 
-// Load from env variables
-const ZOOM_ACCOUNT_ID = process.env.ZOOM_ACCOUNT_ID || '';
-const ZOOM_CLIENT_ID = process.env.ZOOM_CLIENT_ID || '';
-const ZOOM_CLIENT_SECRET = process.env.ZOOM_CLIENT_SECRET || '';
-const ZOOM_WEBHOOK_SECRET_TOKEN = process.env.ZOOM_WEBHOOK_SECRET_TOKEN || '';
+// Load from env variables or config
+const ZOOM_ACCOUNT_ID = process.env.ZOOM_ACCOUNT_ID || 'YOUR_ZOOM_ACCOUNT_ID';
+const ZOOM_CLIENT_ID = process.env.ZOOM_CLIENT_ID || 'YOUR_CLIENT_ID';
+const ZOOM_CLIENT_SECRET = process.env.ZOOM_CLIENT_SECRET || 'YOUR_SECRET';
+
 
 async function getAccessToken(): Promise<string> {
   try {
@@ -43,24 +43,23 @@ async function getAccessToken(): Promise<string> {
   }
 }
 
+
+
 router.post('/webhook', async (req: Request, res: Response) => {
-  const { event, payload, plainToken } = req.body;
 
-  if (event === 'endpoint.url_validation' && plainToken) {
-    const encryptedToken = crypto
-      .createHmac('sha256', ZOOM_WEBHOOK_SECRET_TOKEN)
-      .update(plainToken)
-      .digest('base64');
-
-    res.json({
-      plainToken,
-      encryptedToken,
-    });
+    if (req.body && req.body.event === 'endpoint.url_validation' && req.body.payload && req.body.payload.plainToken) {
+    const plainToken = req.body.payload.plainToken;
+    console.log('Zoom URL validation request received. Returning plainToken:', plainToken);
+    // Correct way to respond to Zoom's URL validation
+    res.status(200).send(plainToken);
     return;
   }
+  
+  const { event, payload } = req.body;
 
-  if (event === 'meeting.ended') {
-    const meetingUUID = payload?.object?.uuid;
+
+if (event === 'meeting.ended') {
+    const meetingUUID = payload.object.uuid;
 
     try {
       const token = await getAccessToken();
@@ -75,6 +74,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
 
       const participants = participantsRes.data.participants;
 
+      // Save each participant attendance to MongoDB
       await Promise.all(
         participants.map((p: any) =>
           Attendance.create({
@@ -90,16 +90,13 @@ router.post('/webhook', async (req: Request, res: Response) => {
       );
 
       res.status(200).send('Attendance saved');
-      return;
     } catch (err: any) {
       console.error('Error fetching participants:', err.message);
       res.status(500).send('Error');
-      return;
     }
+  } else {
+    res.status(200).send('Ignored');
   }
-
-  res.status(200).send('Ignored');
 });
-
 
 export default router;
