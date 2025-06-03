@@ -3,6 +3,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import zoomRoutes from './zoomHandler';
 import dotenv from 'dotenv';
+import userRoutes from './routes/userRoutes';
+import attendanceRoutes from './routes/attendanceRoutes';
 
 
 dotenv.config();
@@ -24,6 +26,10 @@ mongoose.connect(mongoUri)
     // you might want to consider a different pattern (like connection reuse).
     // For now, logging the error and letting the app *try* to run is better than crashing.
   });
+
+
+app.use('/api/users', userRoutes);
+app.use('/api/attendance', attendanceRoutes);
 
 app.use('/zoom', zoomRoutes);
 
