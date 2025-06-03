@@ -20,12 +20,13 @@ export default function LoginForm() {
     setLoading(true);
     try {
       const res = await loginUser({ email, password });
+      alert(res)
       const { name, email: userEmail } = res.data.user;
       localStorage.setItem('token', res.data.token);
       setUser(name, userEmail);
       navigate('/');
     } catch (err: any) {
-      alert(err.response);
+      alert(err);
     } finally {
       setLoading(false);
     }
