@@ -133,7 +133,7 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({ username })
     [&::-webkit-calendar-picker-indicator]:ml-2
     [&::-webkit-date-and-time-value]:text-left
     dark:[&::-webkit-calendar-picker-indicator]:bg-transparent
-    dark:[&::-webkit-calendar-picker-indicator]:hover:bg-white"
+    dark:[&::-webkit-calendar-picker-indicator]:hover:bg-slate-600"
   />
 </div>
 
