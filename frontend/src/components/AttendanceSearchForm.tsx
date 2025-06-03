@@ -127,7 +127,7 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({ username })
     [&::-webkit-calendar-picker-indicator]:bg-white 
     [&::-webkit-calendar-picker-indicator]:rounded-sm 
     [&::-webkit-calendar-picker-indicator]:cursor-pointer
-    [&::-webkit-calendar-picker-indicator]:hover:bg-slate-200
+    [&::-webkit-calendar-picker-indicator]:hover:bg-slate-600
     [&::-webkit-calendar-picker-indicator]:transition-colors
     [&::-webkit-calendar-picker-indicator]:p-1
     [&::-webkit-calendar-picker-indicator]:ml-2
