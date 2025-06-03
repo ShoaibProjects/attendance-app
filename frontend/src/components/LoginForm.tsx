@@ -25,7 +25,7 @@ export default function LoginForm() {
       setUser(name, userEmail);
       navigate('/');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Login failed');
+      alert(err.response);
     } finally {
       setLoading(false);
     }
