@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 export default function RegisterForm() {
-  const [name, setName] = useState('');
+  const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -19,13 +19,13 @@ export default function RegisterForm() {
     e.preventDefault();
     setLoading(true);
     try {
-      await registerUser({ name, email, password });
+      await registerUser({ name: username, email, password });
 
       const res = await loginUser({ email, password });
-      const { name: userName, email: userEmail, token } = res.data;
+      const { name, email: userEmail } = res.data.user;
+      localStorage.setItem('token', res.data.token);
 
-      setUser(userName, userEmail);
-      localStorage.setItem('token', token);
+      setUser(name, userEmail);
       navigate('/');
     } catch (err: any) {
       alert(err.response?.data?.message || 'Registration failed');
@@ -187,9 +187,9 @@ export default function RegisterForm() {
                   </div>
                   <motion.input
                     type="text"
-                    value={name}
+                    value={username}
                     required
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => setUserName(e.target.value)}
                     placeholder="Your full name"
                     className="w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-slate-600 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 placeholder-slate-400"
                     whileFocus={{ scale: 1.02 }}
