@@ -9,6 +9,7 @@ export interface IAttendance extends Document {
   leave_time: string;
   duration: number;
   timestamp: Date;
+  topic: String;
 }
 
 const AttendanceSchema = new Schema<IAttendance>({
@@ -19,6 +20,7 @@ const AttendanceSchema = new Schema<IAttendance>({
   leave_time: { type: String, required: true },
   duration: { type: Number, required: true },
   timestamp: { type: Date, default: Date.now },
+  topic: { type: String },
 });
 
 export default mongoose.model<IAttendance>('Attendance', AttendanceSchema);

@@ -1,9 +1,37 @@
 // src/pages/Home.tsx
+import { useUserStore } from '../store/useUserStore';
+import { Link } from 'react-router-dom';
 import AttendanceSearchForm from '../components/AttendanceSearchForm';
-import { FiCalendar, FiHome} from 'react-icons/fi';
+import LogoutButton from '../components/LogOutBtn';
+import { FiLogIn, FiUserPlus, FiCalendar, FiHome, FiTrendingUp, FiUser } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
 const Home = () => {
+  const { name, isLoggedIn } = useUserStore();
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
 
   // Floating particles animation
   const particleVariants = {
@@ -146,6 +174,80 @@ const Home = () => {
 
       {/* Content */}
       <div className="relative z-10 w-full max-w-4xl">
+        {!isLoggedIn ? (
+          <motion.div 
+            className="w-full max-w-md m-auto text-center"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+          >
+            <motion.div 
+              variants={itemVariants}
+              className="bg-slate-800/70 backdrop-blur-md p-8 sm:p-10 rounded-2xl shadow-2xl border border-slate-700/50 hover:border-slate-600/50 transition-all relative overflow-hidden"
+            >
+              {/* Card inner glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-cyan-500/5 rounded-2xl" />
+              
+              <div className="relative z-10">
+                <div className="flex justify-center mb-6">
+                  <motion.div 
+                    className="p-4 bg-sky-500/10 rounded-full"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <FiTrendingUp className="text-4xl text-sky-400" />
+                  </motion.div>
+                </div>
+                
+                <motion.h1 
+                  variants={itemVariants}
+                  className="text-3xl sm:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-300"
+                >
+                  Welcome to ClassTrack
+                </motion.h1>
+                
+                <motion.p 
+                  variants={itemVariants}
+                  className="text-slate-300 mb-8 text-sm sm:text-base leading-relaxed"
+                >
+                  Seamlessly track your attendance for all your coding classes. Stay on top of your learning journey!
+                </motion.p>
+                
+                <motion.div 
+                  variants={containerVariants}
+                  className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4"
+                >
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      to="/login"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-500 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-sky-500/30 hover:-translate-y-0.5"
+                    >
+                      <FiLogIn className="text-lg" />
+                      Login
+                    </Link>
+                  </motion.div>
+                  
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      to="/register"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200 px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-slate-600/30 hover:-translate-y-0.5"
+                    >
+                      <FiUserPlus className="text-lg" />
+                      Register
+                    </Link>
+                  </motion.div>
+                </motion.div>
+              </div>
+            </motion.div>
+            
+            <motion.p 
+              variants={itemVariants}
+              className="mt-8 text-xs text-slate-500"
+            >
+              Empowering the next generation of coders.
+            </motion.p>
+          </motion.div>
+        ) : (
           <motion.div 
             className="w-full"
             initial={{ opacity: 0 }}
@@ -170,9 +272,17 @@ const Home = () => {
                     Attendance Dashboard
                   </h1>
                   <p className="text-sm text-slate-400 mt-1">
-                    Welcome, <span className="font-semibold text-sky-400">buddy</span>!
+                    Welcome back, <span className="font-semibold text-sky-400">{name}</span>!
                   </p>
                 </div>
+              </div>
+              
+              <div className="mt-4 sm:mt-0 flex items-center gap-4">
+                <div className="hidden sm:flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-full">
+                  <FiUser className="text-sky-400" />
+                  <span className="text-sm font-medium">{name}</span>
+                </div>
+                <LogoutButton />
               </div>
             </motion.header>
 
@@ -192,7 +302,7 @@ const Home = () => {
                     Search Your Attendance
                   </h2>
                 </div>
-                <AttendanceSearchForm />
+                <AttendanceSearchForm username={name} />
               </div>
             </motion.div>
 
@@ -205,6 +315,7 @@ const Home = () => {
               <p>Track. Analyze. Improve.</p>
             </motion.footer>
           </motion.div>
+        )}
       </div>
     </div>
   );

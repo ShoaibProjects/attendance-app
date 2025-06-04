@@ -118,6 +118,18 @@ router.post("/webhook", async (req: Request, res: Response) => {
 
       const participants = participantsRes.data.participants; // Extract participants data
 
+      const topicRes = await axios.get(
+        `https://api.zoom.us/v2/report/meetings/${encodeURIComponent(
+          meetingUUID
+        )}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Use the obtained access token
+          },
+        }
+      );
+      const topic = topicRes.data.topic;
+
       // Save each participant's attendance record to MongoDB.
       // This assumes your Mongoose connection is established and the Attendance model is defined.
       await Promise.all(
@@ -138,6 +150,7 @@ router.post("/webhook", async (req: Request, res: Response) => {
               leave_time: p.leave_time,
               duration: p.duration,
               timestamp: new Date(),
+              topic: topic,
             });
           }
         })
