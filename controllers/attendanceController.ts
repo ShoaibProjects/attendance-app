@@ -56,7 +56,6 @@ export const getAttendanceByNameAndDate = async (req: Request, res: Response) =>
 
 // ✅ New controller: fetch attendance by name until a given date
 export const getAttendanceByNameUntilDate = async (req: Request, res: Response) => {
-  console.log('okkk')
   const { name, date } = req.query;
 
   if (!name || !date) {
