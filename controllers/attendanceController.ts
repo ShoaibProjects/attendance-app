@@ -49,12 +49,14 @@ export const getAttendanceByNameAndDate = async (req: Request, res: Response) =>
 
     res.json(records);
   } catch (err) {
+    console.log(err)
     res.status(500).json({ message: 'Error fetching attendance' });
   }
 };
 
 // ✅ New controller: fetch attendance by name until a given date
 export const getAttendanceByNameUntilDate = async (req: Request, res: Response) => {
+  console.log('okkk')
   const { name, date } = req.query;
 
   if (!name || !date) {
