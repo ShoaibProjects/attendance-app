@@ -10,3 +10,7 @@ export const fetchAttendanceByName = (name: string) =>
 // ✅ New function to fetch by both name and date
 export const fetchAttendanceByNameAndDate = (name: string, date: string) =>
   axios.get(`/api/attendance/by-name-and-date?name=${name}&date=${date}`);
+
+// ✅ NEW: Fetch by name until a specific date
+export const fetchAttendanceByNameUntilDate = (name: string, date: string) =>
+  axios.get(`/api/attendance/by-name-until-date?name=${name}&date=${date}`);
