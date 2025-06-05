@@ -43,9 +43,12 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({
     {}
   );
   const [onTill, setOnTill] = useState("on");
+  const [activeButton, setActiveButton] = useState<'on' | 'till' | null>(null);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setActiveButton('on');
     setLoading(true);
     setError("");
     setRecords([]);
@@ -63,6 +66,7 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({
   };
   const handleTillThatDate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setActiveButton('till');
     setLoading(true);
     setError("");
     setRecords([]);
@@ -206,7 +210,7 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({
               } text-white font-semibold px-6 py-3 rounded-lg shadow-md transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-0.5`}
             >
               <FiSearch className="text-lg" />
-              {onTill === "untill" && loading
+              {activeButton === 'on' && loading
                 ? "Searching..."
                 : "Search Attendance on that date"}
             </button>
@@ -218,7 +222,7 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({
               } text-white font-semibold px-6 py-3 rounded-lg shadow-md transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-0.5`}
             >
               <FiSearch className="text-lg" />
-              {onTill === "on" && loading
+              {activeButton === 'till' && loading
                 ? "Searching..."
                 : "Search Attendance till that date"}
             </button>
