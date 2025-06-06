@@ -6,7 +6,6 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/userRoutes';
 import attendanceRoutes from './routes/attendanceRoutes';
 
-
 dotenv.config();
 
 const app = express();
@@ -15,29 +14,39 @@ app.use(express.json());
 
 const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/your-db';
 
-// --- IMPORTANT CHANGE HERE: Add a .catch() to handle connection errors ---
-mongoose.connect(mongoUri)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => {
-    console.error('CRITICAL: MongoDB connection error on startup:', err);
-    // Do NOT re-throw here for serverless functions, as it would cause the function to crash
-    // and prevent it from sending any response.
-    // However, if the connection is truly critical for *all* operations,
-    // you might want to consider a different pattern (like connection reuse).
-    // For now, logging the error and letting the app *try* to run is better than crashing.
-  });
+let isConnected = false; // Prevent multiple connections
 
+const connectToMongo = async () => {
+  if (isConnected) {
+    console.log('MongoDB already connected');
+    return;
+  }
+
+  const start = Date.now();
+  try {
+    await mongoose.connect(mongoUri);
+    isConnected = true;
+    console.log(`MongoDB connected in ${Date.now() - start} ms`);
+  } catch (err) {
+    console.error('CRITICAL: MongoDB connection error on startup:', err);
+    // Don't throw – allow the app to start (important for serverless)
+  }
+};
+
+// Immediately connect
+connectToMongo();
 
 app.use('/api/users', userRoutes);
 app.use('/api/attendance', attendanceRoutes);
-
 app.use('/zoom', zoomRoutes);
 
-// For local development
+// Local dev server
 if (process.env.NODE_ENV !== 'production') {
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 }
-exports.default = app;
+
+// For Vercel / serverless
+export default app;
