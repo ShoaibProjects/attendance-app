@@ -40,6 +40,8 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [onTill, setOnTill] = useState("on");
   const [_activeButton, setActiveButton] = useState<'on' | 'till' | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,11 +50,13 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({
     setError("");
     setRecords([]);
     setExpandedGroups({});
+    setHasSearched(false); 
 
     try {
       const response = await fetchAttendanceByNameUntilDate(name, date);
       setRecords(response.data);
       setOnTill("until");
+      setHasSearched(true);
     } catch (err) {
       setError("Failed to fetch attendance records. Please try again.");
     } finally {
@@ -155,7 +159,7 @@ const AttendanceSearchForm: React.FC<AttendanceSearchFormProps> = ({
       </AnimatePresence>
 
       {/* Attendance Status */}
-      {name && date && (
+      {name && date && hasSearched && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
